@@ -1,0 +1,17 @@
+# Fica fora do contexto de build tudo o que a imagem não precisa.
+.git
+.github
+.env
+.env.*
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+web/dist
+api/tests
+api/requirements-dev.txt
+monitoring
+infra
+docs
+*.md
+docker-compose.yml

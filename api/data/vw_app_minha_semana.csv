@@ -1,0 +1,105 @@
+﻿funcionario_chave,data,dia_semana_nome,time_nome,estacao_nome,entrar_no_escritorio,embarcar_ate,lotacao_prevista,janela_original
+aa9f7a472a3ddc3e,2026-11-02,Segunda,Financeiro,Tucuruvi,10:30,09:30,Vazio,08:00
+66942dc2f3c1d527,2026-11-02,Segunda,Financeiro,Tucuruvi,10:30,09:30,Vazio,08:00
+0c44ab3091ff2df1,2026-11-02,Segunda,Financeiro,Tatuapé,10:30,09:30,Vazio,08:00
+93b80a0a32888a67,2026-11-02,Segunda,Financeiro,Palmeiras-Barra Funda,10:30,09:30,Vazio,08:00
+27bea972541e6a8b,2026-11-02,Segunda,Financeiro,Penha,09:30,08:30,Moderado,08:00
+67d1a383d5483713,2026-11-02,Segunda,Financeiro,Palmeiras-Barra Funda,09:30,08:30,Moderado,08:00
+0755db0c26bb422a,2026-11-02,Segunda,Financeiro,Artur Alvim,09:30,08:30,Moderado,08:00
+28066f1976e0f338,2026-11-02,Segunda,Financeiro,Saúde,09:30,08:30,Moderado,08:00
+280e785920a94018,2026-11-02,Segunda,Tecnologia,Corinthians-Itaquera,10:30,09:30,Vazio,08:00
+35afd3d0c2d4059e,2026-11-02,Segunda,Tecnologia,Tucuruvi,10:30,09:30,Vazio,08:00
+d6eccb152d3e6964,2026-11-02,Segunda,Tecnologia,Saúde,10:30,09:30,Vazio,08:00
+bda3628862de9377,2026-11-02,Segunda,Tecnologia,Penha,10:30,09:30,Vazio,08:00
+54036c7638317d28,2026-11-02,Segunda,Tecnologia,Saúde,10:30,09:30,Vazio,08:00
+1da14013e9777371,2026-11-02,Segunda,Tecnologia,Tatuapé,09:30,08:30,Moderado,08:00
+8ee34b06bdea61d0,2026-11-02,Segunda,Tecnologia,Santana,09:30,08:30,Moderado,08:00
+b6b693809d6352ee,2026-11-02,Segunda,Tecnologia,Jabaquara,09:30,08:30,Moderado,08:00
+d5233a7508ed7284,2026-11-02,Segunda,Tecnologia,Ana Rosa,09:30,08:30,Moderado,08:00
+5e1bb9c21038baae,2026-11-02,Segunda,Tecnologia,Artur Alvim,09:30,08:30,Moderado,08:00
+07009023e839955c,2026-11-02,Segunda,Tecnologia,Jabaquara,07:00,06:00,Cheio,08:00
+93b80a0a32888a67,2026-11-03,Terça,Financeiro,Palmeiras-Barra Funda,10:30,09:30,Vazio,08:00
+8e1a15ac910946fb,2026-11-03,Terça,Financeiro,Tucuruvi,10:30,09:30,Vazio,08:00
+27bea972541e6a8b,2026-11-03,Terça,Financeiro,Penha,10:30,09:30,Vazio,08:00
+c225475a3d82c350,2026-11-03,Terça,Financeiro,Palmeiras-Barra Funda,10:30,09:30,Vazio,08:00
+0755db0c26bb422a,2026-11-03,Terça,Financeiro,Artur Alvim,09:30,08:30,Moderado,08:00
+8338f6c42662ff8f,2026-11-03,Terça,Financeiro,Tucuruvi,09:30,08:30,Moderado,08:00
+0c44ab3091ff2df1,2026-11-03,Terça,Financeiro,Tatuapé,09:30,08:30,Moderado,08:00
+67d1a383d5483713,2026-11-03,Terça,Financeiro,Palmeiras-Barra Funda,09:30,08:30,Moderado,08:00
+66942dc2f3c1d527,2026-11-03,Terça,Financeiro,Tucuruvi,07:00,06:00,Cheio,08:00
+b6b693809d6352ee,2026-11-03,Terça,Tecnologia,Jabaquara,10:30,09:30,Vazio,08:00
+5e1bb9c21038baae,2026-11-03,Terça,Tecnologia,Artur Alvim,10:30,09:30,Vazio,08:00
+280e785920a94018,2026-11-03,Terça,Tecnologia,Corinthians-Itaquera,10:30,09:30,Vazio,08:00
+54036c7638317d28,2026-11-03,Terça,Tecnologia,Saúde,10:30,09:30,Vazio,08:00
+35afd3d0c2d4059e,2026-11-03,Terça,Tecnologia,Tucuruvi,10:30,09:30,Vazio,08:00
+d5233a7508ed7284,2026-11-03,Terça,Tecnologia,Ana Rosa,09:30,08:30,Moderado,08:00
+bda3628862de9377,2026-11-03,Terça,Tecnologia,Penha,09:30,08:30,Moderado,08:00
+1da14013e9777371,2026-11-03,Terça,Tecnologia,Tatuapé,09:30,08:30,Moderado,08:00
+d6eccb152d3e6964,2026-11-03,Terça,Tecnologia,Saúde,09:30,08:30,Moderado,08:00
+07009023e839955c,2026-11-03,Terça,Tecnologia,Jabaquara,09:30,08:30,Moderado,08:00
+2c91d6685a479a3a,2026-11-03,Terça,Tecnologia,Santana,07:00,06:00,Cheio,08:00
+aa9f7a472a3ddc3e,2026-11-04,Quarta,Financeiro,Tucuruvi,10:30,09:30,Vazio,08:00
+48969d83b652ae30,2026-11-04,Quarta,Financeiro,Saúde,10:30,09:30,Vazio,08:00
+8338f6c42662ff8f,2026-11-04,Quarta,Financeiro,Tucuruvi,09:30,08:30,Moderado,08:00
+28066f1976e0f338,2026-11-04,Quarta,Financeiro,Saúde,09:30,08:30,Moderado,08:00
+c225475a3d82c350,2026-11-04,Quarta,Financeiro,Palmeiras-Barra Funda,07:00,06:00,Cheio,08:00
+c76e8abd8ca45fd3,2026-11-04,Quarta,Tecnologia,Santana,10:30,09:30,Vazio,08:00
+536725f06dce5a56,2026-11-04,Quarta,Tecnologia,Santana,10:30,09:30,Vazio,08:00
+5e1bb9c21038baae,2026-11-04,Quarta,Tecnologia,Artur Alvim,10:30,09:30,Vazio,08:00
+8ee34b06bdea61d0,2026-11-04,Quarta,Tecnologia,Santana,09:30,08:30,Moderado,08:00
+d6eccb152d3e6964,2026-11-04,Quarta,Tecnologia,Saúde,09:30,08:30,Moderado,08:00
+35afd3d0c2d4059e,2026-11-04,Quarta,Tecnologia,Tucuruvi,09:30,08:30,Moderado,08:00
+54036c7638317d28,2026-11-04,Quarta,Tecnologia,Saúde,07:00,06:00,Cheio,08:00
+48969d83b652ae30,2026-11-05,Quinta,Financeiro,Saúde,10:30,09:30,Vazio,08:00
+0755db0c26bb422a,2026-11-05,Quinta,Financeiro,Artur Alvim,09:30,08:30,Moderado,08:00
+8b27399810b4b118,2026-11-05,Quinta,Tecnologia,Tatuapé,10:30,09:30,Vazio,08:00
+07009023e839955c,2026-11-05,Quinta,Tecnologia,Jabaquara,10:30,09:30,Vazio,08:00
+d5233a7508ed7284,2026-11-05,Quinta,Tecnologia,Ana Rosa,09:30,08:30,Moderado,08:00
+bda3628862de9377,2026-11-05,Quinta,Tecnologia,Penha,09:30,08:30,Moderado,08:00
+5e1bb9c21038baae,2026-11-05,Quinta,Tecnologia,Artur Alvim,07:00,06:00,Cheio,08:00
+66942dc2f3c1d527,2026-11-06,Sexta,Financeiro,Tucuruvi,10:30,09:30,Vazio,08:00
+27bea972541e6a8b,2026-11-06,Sexta,Financeiro,Penha,10:30,09:30,Vazio,08:00
+67d1a383d5483713,2026-11-06,Sexta,Financeiro,Palmeiras-Barra Funda,09:30,08:30,Moderado,08:00
+0c44ab3091ff2df1,2026-11-06,Sexta,Financeiro,Tatuapé,09:30,08:30,Moderado,08:00
+0755db0c26bb422a,2026-11-06,Sexta,Financeiro,Artur Alvim,07:00,06:00,Cheio,08:00
+536725f06dce5a56,2026-11-06,Sexta,Tecnologia,Santana,10:30,09:30,Vazio,08:00
+c76e8abd8ca45fd3,2026-11-06,Sexta,Tecnologia,Santana,10:30,09:30,Vazio,08:00
+54036c7638317d28,2026-11-06,Sexta,Tecnologia,Saúde,10:30,09:30,Vazio,08:00
+30b5ade1074a7014,2026-11-06,Sexta,Tecnologia,Palmeiras-Barra Funda,10:30,09:30,Vazio,08:00
+2c91d6685a479a3a,2026-11-06,Sexta,Tecnologia,Santana,09:30,08:30,Moderado,08:00
+b6b693809d6352ee,2026-11-06,Sexta,Tecnologia,Jabaquara,09:30,08:30,Moderado,08:00
+07009023e839955c,2026-11-06,Sexta,Tecnologia,Jabaquara,09:30,08:30,Moderado,08:00
+5e1bb9c21038baae,2026-11-06,Sexta,Tecnologia,Artur Alvim,09:30,08:30,Moderado,08:00
+66942dc2f3c1d527,2026-11-09,Segunda,Financeiro,Tucuruvi,10:30,09:30,Vazio,08:00
+c225475a3d82c350,2026-11-09,Segunda,Financeiro,Palmeiras-Barra Funda,10:30,09:30,Vazio,08:00
+8e1a15ac910946fb,2026-11-09,Segunda,Financeiro,Tucuruvi,10:30,09:30,Vazio,08:00
+27bea972541e6a8b,2026-11-09,Segunda,Financeiro,Penha,09:30,08:30,Moderado,08:00
+aa9f7a472a3ddc3e,2026-11-09,Segunda,Financeiro,Tucuruvi,09:30,08:30,Moderado,08:00
+8338f6c42662ff8f,2026-11-09,Segunda,Financeiro,Tucuruvi,09:30,08:30,Moderado,08:00
+93b80a0a32888a67,2026-11-09,Segunda,Financeiro,Palmeiras-Barra Funda,07:00,06:00,Cheio,08:00
+536725f06dce5a56,2026-11-09,Segunda,Tecnologia,Santana,10:30,09:30,Vazio,08:00
+8ee34b06bdea61d0,2026-11-09,Segunda,Tecnologia,Santana,10:30,09:30,Vazio,08:00
+bda3628862de9377,2026-11-09,Segunda,Tecnologia,Penha,09:30,08:30,Moderado,08:00
+b6b693809d6352ee,2026-11-09,Segunda,Tecnologia,Jabaquara,09:30,08:30,Moderado,08:00
+1da14013e9777371,2026-11-09,Segunda,Tecnologia,Tatuapé,07:00,06:00,Moderado,08:00
+0c44ab3091ff2df1,2026-11-10,Terça,Financeiro,Tatuapé,10:30,09:30,Vazio,08:00
+48969d83b652ae30,2026-11-10,Terça,Financeiro,Saúde,10:30,09:30,Vazio,08:00
+27bea972541e6a8b,2026-11-10,Terça,Financeiro,Penha,09:30,08:30,Moderado,08:00
+8338f6c42662ff8f,2026-11-10,Terça,Financeiro,Tucuruvi,09:30,08:30,Moderado,08:00
+c225475a3d82c350,2026-11-10,Terça,Financeiro,Palmeiras-Barra Funda,07:00,06:00,Cheio,08:00
+d6eccb152d3e6964,2026-11-10,Terça,Tecnologia,Saúde,10:30,09:30,Vazio,08:00
+536725f06dce5a56,2026-11-10,Terça,Tecnologia,Santana,10:30,09:30,Vazio,08:00
+30b5ade1074a7014,2026-11-10,Terça,Tecnologia,Palmeiras-Barra Funda,10:30,09:30,Vazio,08:00
+bda3628862de9377,2026-11-10,Terça,Tecnologia,Penha,09:30,08:30,Moderado,08:00
+1da14013e9777371,2026-11-10,Terça,Tecnologia,Tatuapé,09:30,08:30,Moderado,08:00
+c76e8abd8ca45fd3,2026-11-10,Terça,Tecnologia,Santana,09:30,08:30,Moderado,08:00
+35afd3d0c2d4059e,2026-11-10,Terça,Tecnologia,Tucuruvi,07:00,06:00,Cheio,08:00
+c225475a3d82c350,2026-11-11,Quarta,Financeiro,Palmeiras-Barra Funda,10:30,09:30,Vazio,08:00
+8338f6c42662ff8f,2026-11-11,Quarta,Financeiro,Tucuruvi,10:30,09:30,Vazio,08:00
+66942dc2f3c1d527,2026-11-11,Quarta,Financeiro,Tucuruvi,09:30,08:30,Moderado,08:00
+8b27399810b4b118,2026-11-11,Quarta,Tecnologia,Tatuapé,10:30,09:30,Vazio,08:00
+d5233a7508ed7284,2026-11-11,Quarta,Tecnologia,Ana Rosa,10:30,09:30,Vazio,08:00
+8ee34b06bdea61d0,2026-11-11,Quarta,Tecnologia,Santana,10:30,09:30,Vazio,08:00
+b6b693809d6352ee,2026-11-11,Quarta,Tecnologia,Jabaquara,09:30,08:30,Moderado,08:00
+2c91d6685a479a3a,2026-11-11,Quarta,Tecnologia,Santana,09:30,08:30,Moderado,08:00
+280e785920a94018,2026-11-11,Quarta,Tecnologia,Corinthians-Itaquera,09:30,08:30,Moderado,08:00

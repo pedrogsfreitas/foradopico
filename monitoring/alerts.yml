@@ -1,0 +1,40 @@
+groups:
+  - name: foradopico
+    rules:
+      - alert: AppForaDoAr
+        expr: up{job="foradopico"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ForaDoPico fora do ar ({{ $labels.ambiente }})"
+          description: "O Prometheus não consegue coletar {{ $labels.instance }} há mais de 1 minuto."
+
+      - alert: TaxaDeErrosAlta
+        expr: |
+          sum by (ambiente) (rate(http_requests_total{job="foradopico",status="5xx"}[5m]))
+            / sum by (ambiente) (rate(http_requests_total{job="foradopico"}[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Mais de 5% das requisições com erro 5xx ({{ $labels.ambiente }})"
+
+      - alert: LatenciaAlta
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le, ambiente) (rate(http_request_duration_highr_seconds_bucket{job="foradopico"}[5m]))
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "p95 de latência acima de 500 ms ({{ $labels.ambiente }})"
+
+      - alert: SaturacaoAlta
+        expr: max by (ambiente) (http_requests_inprogress{job="foradopico"}) > 20
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Mais de 20 requisições simultâneas em andamento ({{ $labels.ambiente }})"

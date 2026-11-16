@@ -1,0 +1,5 @@
+# Copie para producao.yml (ignorado pelo git) e troque o host pelo do MVP publicado.
+- targets: ["SEU-HOST-PUBLICO:443"]
+  labels:
+    ambiente: producao
+    __scheme__: https

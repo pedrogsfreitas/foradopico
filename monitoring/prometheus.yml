@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  # Os alvos ficam em arquivos dentro de monitoring/targets/.
+  # local.yml aponta para o container do compose. Para monitorar o MVP
+  # publicado, copie producao.yml.example para producao.yml e ajuste o host.
+  - job_name: foradopico
+    metrics_path: /metrics
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/targets/*.yml
+        refresh_interval: 30s
