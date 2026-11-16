@@ -14,9 +14,19 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     STATIC_DIR=/app/static
 
+# Aplica as correções de segurança do sistema que saíram depois da imagem base.
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && apt-get -y install --no-install-recommends zlib1g \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY api/requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Instala as dependências e remove o pip: ele não é usado em execução e traz
+# bibliotecas embutidas (urllib3, msgpack, setuptools) que só aumentam a
+# superfície de ataque da imagem.
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip uninstall -y pip
 
 COPY api/app ./app
 COPY api/data ./data
