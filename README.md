@@ -106,7 +106,30 @@ docs/         Contrato da API com o robô RPA
 | Fumaça | Docker | o container não responde em `/health` ou roda como root |
 
 A imagem só é publicada no GHCR depois que todas as etapas passam, e só na branch `main`.
-O deploy automático na nuvem entra junto com o Terraform.
+
+**Deploy automático:** a VM confere o GHCR a cada minuto e troca o container quando há imagem nova. O job `deploy` só fica verde quando `/health` na URL pública responde com a versão do commit. Nenhuma credencial da Azure fica no GitHub, e a porta 22 não precisa aceitar os runners.
+
+## Infraestrutura (Terraform, Azure)
+
+`infra/` cria: grupo de recursos, rede virtual, NSG, IP público com DNS e uma VM Ubuntu que sobe o app atrás do Caddy (HTTPS automático).
+
+| Porta | Origem | Motivo |
+|---|---|---|
+| 443 e 80 | Internet | O MVP é público; a 80 só redireciona e valida o certificado |
+| 22 | Somente `admin_cidr` (seu IP /32) | Administração. A variável recusa `/0` na validação |
+
+```bash
+az login
+cd infra
+cp terraform.tfvars.example terraform.tfvars   # preencha; o arquivo é ignorado pelo git
+terraform init
+terraform plan
+terraform apply
+```
+
+O state (`*.tfstate`) e o `terraform.tfvars` ficam fora do repositório. Depois do apply, grave a saída `url_do_mvp` na variável `MVP_URL` do repositório (Settings → Secrets and variables → Actions → Variables) e deixe o pacote da imagem no GHCR como público.
+
+Para destruir tudo e parar a cobrança: `terraform destroy`.
 
 ## Observabilidade
 

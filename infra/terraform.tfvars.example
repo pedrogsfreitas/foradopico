@@ -1,0 +1,9 @@
+# Copie para terraform.tfvars (ignorado pelo git) e preencha.
+subscription_id = "00000000-0000-0000-0000-000000000000"
+dns_label       = "foradopico-seunome"
+admin_cidr      = "203.0.113.10/32"
+ssh_public_key  = "ssh-ed25519 AAAA... voce@maquina"
+image           = "ghcr.io/seu-usuario/foradopico"
+acme_email      = "voce@exemplo.com"
+# location      = "brazilsouth"
+# vm_size       = "Standard_B1s"

@@ -1,0 +1,107 @@
+#cloud-config
+# Prepara a VM: Docker, o compose de produção e o deploy automático.
+package_update: true
+packages:
+  - docker.io
+  - docker-compose-v2
+  - unattended-upgrades
+
+write_files:
+  - path: /opt/foradopico/compose.yml
+    permissions: "0644"
+    content: |
+      services:
+        app:
+          image: ${image}:latest
+          restart: unless-stopped
+          read_only: true
+          tmpfs:
+            - /tmp
+          cap_drop:
+            - ALL
+          security_opt:
+            - no-new-privileges:true
+          expose:
+            - "8000"
+
+        caddy:
+          image: caddy:2-alpine
+          restart: unless-stopped
+          ports:
+            - "80:80"
+            - "443:443"
+          volumes:
+            - /opt/foradopico/Caddyfile:/etc/caddy/Caddyfile:ro
+            - caddy-data:/data
+            - caddy-config:/config
+          security_opt:
+            - no-new-privileges:true
+          depends_on:
+            - app
+
+      volumes:
+        caddy-data:
+        caddy-config:
+
+  - path: /opt/foradopico/Caddyfile
+    permissions: "0644"
+    content: |
+      {
+        email ${acme_email}
+      }
+
+      ${fqdn} {
+        encode gzip
+        header {
+          Strict-Transport-Security "max-age=31536000"
+          X-Content-Type-Options "nosniff"
+          X-Frame-Options "DENY"
+          Referrer-Policy "strict-origin-when-cross-origin"
+        }
+        reverse_proxy app:8000
+      }
+
+  # Deploy automático "puxado": a VM confere a cada minuto se o pipeline
+  # publicou uma imagem nova no GHCR e, se sim, recria o container.
+  # Assim nenhuma credencial da nuvem sai da Azure e a porta 22 não precisa
+  # ficar aberta para os runners do GitHub.
+  - path: /usr/local/bin/foradopico-deploy
+    permissions: "0755"
+    content: |
+      #!/bin/sh
+      set -eu
+      cd /opt/foradopico
+      docker compose -f compose.yml pull --quiet app
+      docker compose -f compose.yml up -d --remove-orphans
+      docker image prune -f >/dev/null
+
+  - path: /etc/systemd/system/foradopico-deploy.service
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Atualiza o ForaDoPico para a imagem mais recente
+      After=docker.service network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/bin/foradopico-deploy
+
+  - path: /etc/systemd/system/foradopico-deploy.timer
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Confere imagem nova do ForaDoPico a cada minuto
+
+      [Timer]
+      OnBootSec=30s
+      OnUnitActiveSec=60s
+      AccuracySec=5s
+
+      [Install]
+      WantedBy=timers.target
+
+runcmd:
+  - systemctl enable --now docker
+  - systemctl daemon-reload
+  - systemctl enable --now foradopico-deploy.timer
