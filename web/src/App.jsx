@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import Lotacao from "./Lotacao.jsx";
 import MinhaSemana from "./MinhaSemana.jsx";
+import Alertas from "./Alertas.jsx";
+import AoVivo from "./AoVivo.jsx";
+import Assistente from "./Assistente.jsx";
+import Empresa from "./Empresa.jsx";
 
 const TABS = [
-  { id: "lotacao", label: "Lotação prevista" },
-  { id: "minha-semana", label: "Minha semana" },
+  { id: "lotacao", label: "Lotação prevista", view: Lotacao },
+  { id: "minha-semana", label: "Minha semana", view: MinhaSemana },
+  { id: "alertas", label: "Alertas", view: Alertas },
+  { id: "ao-vivo", label: "Ao vivo", view: AoVivo },
+  { id: "assistente", label: "Pergunte", view: Assistente },
+  { id: "empresa", label: "Empresa (RH)", view: Empresa },
 ];
 
 function tabFromHash() {
@@ -20,6 +28,8 @@ export default function App() {
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
+
+  const View = TABS.find((item) => item.id === tab).view;
 
   return (
     <>
@@ -44,7 +54,9 @@ export default function App() {
           </nav>
         </div>
       </header>
-      <main id="conteudo">{tab === "lotacao" ? <Lotacao /> : <MinhaSemana />}</main>
+      <main id="conteudo">
+        <View />
+      </main>
     </>
   );
 }

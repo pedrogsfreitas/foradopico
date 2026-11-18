@@ -100,3 +100,40 @@ th, td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid var
 @media (prefers-reduced-motion: no-preference) {
   .barra { transition: height 0.25s ease; }
 }
+
+/* ---- telas novas: alertas, ao vivo, assistente e RH ---- */
+section > h2 { margin: 1.6rem 0 0.6rem; }
+.nota { font-size: 0.85rem; color: var(--tinta-2); }
+.vazio-msg { color: var(--tinta-2); background: var(--papel); border: 1px dashed var(--borda); border-radius: 12px; padding: 0.9rem 1rem; }
+.aviso.neutro { background: #fff7e6; border-left-color: var(--acento); }
+
+.cartoes { list-style: none; padding: 0; margin: 0 0 0.6rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.75rem; }
+.cartao { background: var(--papel); border: 1px solid var(--borda); border-radius: 12px; padding: 0.9rem 1rem; display: grid; gap: 0.4rem; align-content: start; }
+.cartao.largo { margin-bottom: 0.75rem; }
+.cartao .titulo { font-weight: 700; }
+.cartao .numero strong { font-size: 1.9rem; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.cabecalho { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; align-items: center; }
+
+.lista { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+.lista li { background: var(--papel); border: 1px solid var(--borda); border-left: 4px solid var(--tinta); border-radius: 8px; padding: 0.7rem 0.9rem; display: grid; gap: 0.15rem; }
+.lista.simples li { border: 0; padding: 0; background: none; }
+
+.pergunta { display: grid; gap: 0.5rem; margin-bottom: 1rem; }
+.pergunta.estreito { max-width: 380px; }
+.pergunta label { font-size: 0.8rem; font-weight: 600; color: var(--tinta-2); }
+textarea, input[type="password"] { font: inherit; color: var(--tinta); padding: 0.65rem 0.75rem; border: 1px solid #8a94a6; border-radius: 8px; background: var(--papel); width: 100%; }
+.acoes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+button { font: inherit; font-weight: 600; min-height: 44px; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--tinta); background: var(--tinta); color: #fff; cursor: pointer; }
+button.secundario { background: var(--papel); color: var(--tinta); border-color: #8a94a6; font-weight: 500; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.resposta .texto { white-space: pre-wrap; font-size: 1.05rem; }
+.resposta a { color: #0b4f9e; }
+
+.indicadores { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.75rem; }
+.indicadores li { background: var(--papel); border: 1px solid var(--borda); border-radius: 12px; padding: 0.9rem 1rem; display: grid; gap: 0.1rem; }
+.indicadores strong { font-size: 2rem; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1.1; }
+.indicadores span { font-weight: 600; }
+.indicadores small { color: var(--tinta-2); }
+.cartao .rolagem { padding-top: 0; }
+.cartao table { min-width: 640px; font-size: 0.9rem; }
+nav { flex-wrap: wrap; }

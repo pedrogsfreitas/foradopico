@@ -82,6 +82,12 @@ class GoldData:
     def slots(self, line: str, station: str, weekday: str) -> list[Slot]:
         return self.forecast.get((line, station, weekday), [])
 
+    def slot_at(self, line: str, station: str, weekday: str, slot: str) -> Slot | None:
+        for item in self.slots(line, station, weekday):
+            if item.slot == slot:
+                return item
+        return None
+
     def lines_of(self, station: str) -> list[str]:
         return [s["lineName"] for s in self.stations if s["stationName"] == station]
 

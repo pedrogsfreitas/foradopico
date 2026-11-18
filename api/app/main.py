@@ -1,8 +1,11 @@
 """API do ForaDoPico (MVP).
 
-Hoje expõe as leituras que as telas "Lotação prevista" e "Minha semana"
-consomem, além de /health e /metrics. Os endpoints do contrato com o robô
-RPA (docs/productApiContract.yaml) entram na próxima etapa.
+Reúne os componentes das disciplinas em um só produto:
+- Big Data: leituras da camada Ouro (lotação prevista e minha semana).
+- RPA: contrato com o robô (app/robot.py).
+- Visão e Maker Lab: leituras ao vivo; GenAI: assistente; BI: painel do RH
+  (app/product.py).
+- DevOps: /health e /metrics.
 """
 from __future__ import annotations
 
@@ -10,20 +13,22 @@ import os
 from datetime import date, timedelta
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 
+from . import product, robot
 from .data import (
     FORECAST_VIEW,
     MY_WEEK_VIEW,
     SOURCE_LAYER,
     WEEKDAYS,
-    GoldData,
     one_hour_before,
     week_start,
 )
+from .state import gold
 
 APP_VERSION = os.getenv("APP_VERSION", "dev")
 STATIC_DIR = Path(os.getenv("STATIC_DIR", Path(__file__).resolve().parent.parent / "static"))
@@ -39,7 +44,19 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
     redoc_url=None,
 )
-gold = GoldData()
+app.include_router(robot.router)
+app.include_router(product.router)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error(_: Request, exc: RequestValidationError) -> JSONResponse:
+    # Formato combinado com o robô: {"errors": [{"field", "message"}]}.
+    errors = [
+        {"field": ".".join(str(part) for part in err["loc"][1:]), "message": err["msg"]}
+        for err in exc.errors()
+    ]
+    return JSONResponse({"errors": errors}, status_code=422)
+
 
 Instrumentator(
     should_group_status_codes=True,

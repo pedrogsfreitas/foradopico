@@ -22,28 +22,31 @@ Global Solution FIAP 2026.2 · CitizenTech · Engenharia de Software 4ES.
 | **Arquitetura: componentes** | API (FastAPI) e front (React) na mesma imagem; pipeline de dados (Airflow e Databricks); robô RPA (Python); visão computacional (YOLO); assistente (LLM local com RAG); dispositivo ESP32 |
 | **Fontes de dados** | Demanda por estação do portal de transparência do Metrô de SP; clima do Open-Meteo; views da camada Ouro `vw_app_lotacao_prevista` e `vw_app_minha_semana` |
 | **Modelos de IA utilizados** | A CONFIRMAR com a equipe: YOLO para contagem de pessoas; LLM local com RAG para o assistente |
-| **URL do MVP e repositório** | URL: A PREENCHER após o deploy · Repositório: este |
+| **URL do MVP e repositório** | URL: https://foradopico-gs.brazilsouth.cloudapp.azure.com · Repositório: este |
 | **Indicadores de impacto** | Horas devolvidas ao funcionário por mês; viagens no pico evitadas por funcionário; lotação média evitada; dias com plano B acionado |
 | **ODS conectados** | ODS 11 (cidades sustentáveis), ODS 3 (saúde e bem-estar), ODS 9 (inovação e infraestrutura), ODS 10 (redução das desigualdades) |
 
 Repositórios das outras disciplinas: [Big Data](https://github.com/saborido613/foradopico-bigdata) · [RPA](https://github.com/haruoooo/SemestralRpa).
 
-## O que já funciona
+## O que o MVP faz
 
-| Tela | Dados | Endpoint |
+| Tela | O que mostra | De onde vem |
 |---|---|---|
-| Lotação prevista | `vw_app_lotacao_prevista` (Ouro · Databricks) | `GET /api/crowdingForecast` |
-| Minha semana | `vw_app_minha_semana` (Ouro · Databricks) | `GET /api/myWeek` |
+| Lotação prevista | Lotação por estação, dia e faixa de 15 min, com o melhor horário | Big Data: `vw_app_lotacao_prevista` (Ouro · Databricks) |
+| Minha semana | Dias presenciais, janela sugerida e antes × depois | Big Data: `vw_app_minha_semana` (Ouro · Databricks) |
+| Alertas | Situação das linhas, falhas e plano B aprovado | RPA: robô, pelo contrato da API |
+| Ao vivo | Contagem de pessoas na plataforma ao lado da previsão | Visão computacional (YOLO) e Maker Lab (ESP32) |
+| Pergunte | Dúvidas sobre regras e direitos, com fonte ou "não consta" | Generative AI: LLM local com RAG |
+| Empresa (RH) | Aprovação de escalas e planos B, indicadores de impacto e negócio | RPA, motor de escala e BI |
 
-Também: `GET /health`, `GET /metrics` (Prometheus) e a documentação interativa em `/api/docs`.
-Os endpoints do contrato com o robô RPA estão em [docs/productApiContract.yaml](docs/productApiContract.yaml) e entram na próxima etapa.
+O contrato de cada integração está em [docs/integracao.md](docs/integracao.md). Operação: `GET /health`, `GET /metrics` (Prometheus) e documentação interativa em `/api/docs`.
 
 ## Como rodar
 
 Pré-requisito: Docker com Docker Compose.
 
 ```bash
-cp .env.example .env      # troque a senha do Grafana
+cp .env.example .env      # troque a senha do Grafana e gere as chaves do MVP
 docker compose up --build
 ```
 
@@ -77,11 +80,12 @@ cd api && python -m pytest -q
 ## Estrutura
 
 ```
-api/          API FastAPI, dados da Ouro e testes
+api/          API FastAPI, dados da Ouro, motor de escala e testes
+scripts/      Dados fictícios de demonstração
 web/          Front React (Vite)
 monitoring/   Prometheus, regras de alerta e dashboard do Grafana
 infra/        Terraform da nuvem
-docs/         Contrato da API com o robô RPA
+docs/         Contratos de integração (robô RPA, visão, ESP32 e LLM)
 .github/      Pipeline do GitHub Actions
 ```
 
@@ -150,6 +154,9 @@ Para monitorar o MVP publicado a partir da sua máquina, copie `monitoring/targe
 
 ## Dados pessoais e LGPD
 
-- As duas views da Ouro usadas hoje não têm nome nem e-mail: o funcionário aparece como um hash (`funcionario_chave`).
+- As duas views da Ouro não têm nome nem e-mail: o funcionário aparece como um hash (`funcionario_chave`).
+- A planilha do RH traz nome, e-mail, time e estação de embarque. Esses dados ficam só no banco da API (SQLite em volume da VM) e só saem por endpoints autenticados (robô e RH). As telas públicas não mostram nenhum deles.
 - O app não usa GPS; trabalha só com estação de embarque e janela de entrada.
-- Os dados do repositório são de uma empresa fictícia.
+- Os logs e as métricas não registram dados pessoais.
+- Os dados de demonstração são de uma empresa fictícia.
+- As chaves de acesso são geradas na VM e nunca passam pelo repositório nem pelo estado do Terraform.

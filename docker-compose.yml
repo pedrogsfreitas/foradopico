@@ -13,6 +13,14 @@ services:
     image: foradopico:${APP_VERSION:-local}
     ports:
       - "8000:8000"
+    environment:
+      # Sem valor, o grupo de endpoints correspondente responde 503 (fechado por padrão).
+      ROBOT_API_KEY: ${ROBOT_API_KEY:-}
+      SENSOR_API_KEY: ${SENSOR_API_KEY:-}
+      HR_ACCESS_CODE: ${HR_ACCESS_CODE:-}
+      LLM_API_URL: ${LLM_API_URL:-}
+    volumes:
+      - app-data:/data
     read_only: true
     tmpfs:
       - /tmp
@@ -60,5 +68,6 @@ services:
     restart: unless-stopped
 
 volumes:
+  app-data:
   prometheus-data:
   grafana-data:

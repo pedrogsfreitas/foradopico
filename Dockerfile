@@ -33,7 +33,10 @@ COPY api/data ./data
 COPY --from=web /web/dist ./static
 
 # Usuário sem privilégios e sem shell: a aplicação nunca roda como root.
-RUN useradd --system --uid 10001 --no-create-home --shell /usr/sbin/nologin app
+RUN useradd --system --uid 10001 --no-create-home --shell /usr/sbin/nologin app \
+    && mkdir /data && chown 10001 /data
+# /data recebe um volume: é o único lugar gravável além de /tmp.
+VOLUME /data
 USER 10001
 
 ARG APP_VERSION=dev

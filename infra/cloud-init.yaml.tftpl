@@ -14,6 +14,10 @@ write_files:
         app:
           image: ${image}:latest
           restart: unless-stopped
+          env_file:
+            - /opt/foradopico/.env
+          volumes:
+            - app-data:/data
           read_only: true
           tmpfs:
             - /tmp
@@ -40,6 +44,7 @@ write_files:
             - app
 
       volumes:
+        app-data:
         caddy-data:
         caddy-config:
 
@@ -103,5 +108,12 @@ write_files:
 
 runcmd:
   - systemctl enable --now docker
+  # As chaves do MVP nascem na própria VM: não passam pelo Terraform nem pelo repositório.
+  - |
+    if [ ! -f /opt/foradopico/.env ]; then
+      umask 077
+      printf 'ROBOT_API_KEY=%s\nSENSOR_API_KEY=%s\nHR_ACCESS_CODE=%s\nLLM_API_URL=\n' \
+        "$(openssl rand -hex 24)" "$(openssl rand -hex 24)" "$(openssl rand -hex 8)" > /opt/foradopico/.env
+    fi
   - systemctl daemon-reload
   - systemctl enable --now foradopico-deploy.timer

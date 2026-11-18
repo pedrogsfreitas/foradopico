@@ -151,5 +151,11 @@ resource "azurerm_linux_virtual_machine" "app" {
     acme_email = var.acme_email
   }))
 
+  # Mudar o cloud-init recriaria a VM (e apagaria os dados). Uma VM já criada
+  # é atualizada com infra/atualizar-vm.sh; o modelo novo vale para as próximas.
+  lifecycle {
+    ignore_changes = [custom_data]
+  }
+
   depends_on = [azurerm_subnet_network_security_group_association.app]
 }
