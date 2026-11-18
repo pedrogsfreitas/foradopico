@@ -79,17 +79,22 @@ def main() -> int:
     status, created = call(base, "POST", "/alerts", robot, alert)
     print(f"Alerta: {status}")
 
-    for source, source_id, station, count, category in [
-        ("vision", "camera-demo-01", "Corinthians-Itaquera", 148, "Crítico"),
-        ("device", "esp32-demo-01", "Corinthians-Itaquera", 131, None),
-        ("vision", "camera-demo-02", "Tucuruvi", 37, "Moderado"),
-    ]:
-        reading = {
-            "source": source, "sourceId": source_id, "stationName": station,
-            "peopleCount": count, "densityCategory": category, "simulated": True,
-        }
-        status, _ = call(base, "POST", "/api/liveReadings", sensor, reading)
-        print(f"Leitura {source} em {station}: {status}")
+    readings = [
+        {"source": "vision", "sourceId": "camera-demo-01", "stationName": "Corinthians-Itaquera",
+         "lineName": "3-Vermelha", "peopleCount": 37, "capacity": 40, "crowdingIndex": 0.925,
+         "densityCategory": "Crítico"},
+        {"source": "vision", "sourceId": "camera-demo-02", "stationName": "Tucuruvi",
+         "lineName": "1-Azul", "peopleCount": 18, "capacity": 40, "crowdingIndex": 0.45,
+         "densityCategory": "Moderado"},
+        {"source": "device", "sourceId": "esp32-demo-01", "stationName": "Corinthians-Itaquera",
+         "lineName": "3-Vermelha", "lightPct": 14, "lightClass": "critica", "temperatureC": 29.4,
+         "humidityPct": 72, "darkZone": True, "darkZoneCount": 1,
+         "aiAlert": "[SIMULADO] Trecho escuro na plataforma. Temperatura de 29,4 °C e umidade de 72%: "
+                    "ambiente abafado. Recomenda-se verificar a iluminação do local."},
+    ]
+    for reading in readings:
+        status, _ = call(base, "POST", "/api/liveReadings", sensor, {**reading, "simulated": True})
+        print(f"Leitura {reading['source']} ({reading['sourceId']}): {status}")
 
     status, todays = call(base, "GET", f"/assignments?date={day.isoformat()}&lineNumber=3", robot)
     if status == 200 and todays and isinstance(created, dict):

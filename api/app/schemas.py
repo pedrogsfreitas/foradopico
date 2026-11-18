@@ -4,7 +4,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 HHMM = r"^\d{2}:\d{2}$"
 LineStatusCode = Literal["normal", "degraded", "stopped", "closed", "unknown"]
@@ -92,17 +92,52 @@ class DispatchReport(BaseModel):
     items: list[DispatchItem]
 
 
+Category = Literal["Vazio", "Moderado", "Cheio", "Crítico"]
+
+
 class LiveReading(BaseModel):
-    """Leitura enviada pela visão computacional (YOLO) ou pelo dispositivo ESP32."""
+    """Leitura da visão computacional (contagem de pessoas) ou do robô-sensor ESP32 (ambiente).
+
+    - vision: peopleCount obrigatório (YOLO11 treinado para cabeças).
+    - device: ao menos uma medida de ambiente (luz, temperatura, umidade). O
+      robô do Maker Lab não conta pessoas.
+    """
 
     source: Literal["vision", "device"]
     sourceId: str = Field(min_length=1, max_length=60, description="Câmera ou dispositivo")
     stationName: str = Field(min_length=1, max_length=80)
     lineName: str | None = Field(default=None, max_length=40)
-    peopleCount: int = Field(ge=0, le=100000)
-    densityCategory: Literal["Vazio", "Moderado", "Cheio", "Crítico"] | None = None
     capturedAt: datetime | None = None
     simulated: bool = False
+    # Visão computacional
+    peopleCount: int | None = Field(default=None, ge=0, le=100000)
+    capacity: int | None = Field(default=None, ge=1, le=100000)
+    crowdingIndex: float | None = Field(default=None, ge=0, le=100)
+    densityCategory: Category | None = None
+    # Robô-sensor (Maker Lab)
+    lightPct: int | None = Field(default=None, ge=0, le=100)
+    lightClass: Literal["adequada", "baixa", "critica"] | None = None
+    temperatureC: float | None = Field(default=None, ge=-30, le=80)
+    humidityPct: float | None = Field(default=None, ge=0, le=100)
+    darkZone: bool | None = None
+    darkZoneCount: int | None = Field(default=None, ge=0)
+    aiAlert: str | None = Field(default=None, max_length=1200)
+
+    @field_validator("densityCategory", mode="before")
+    @classmethod
+    def accept_unaccented(cls, value):
+        # O script da visão escreve "Critico", sem acento.
+        return "Crítico" if isinstance(value, str) and value.lower() in ("critico", "crítico") else value
+
+    @model_validator(mode="after")
+    def check_source(self):
+        if self.source == "vision" and self.peopleCount is None:
+            raise ValueError("peopleCount é obrigatório para source = vision")
+        if self.source == "device" and all(
+            v is None for v in (self.lightPct, self.lightClass, self.temperatureC, self.humidityPct)
+        ):
+            raise ValueError("informe ao menos lightPct, lightClass, temperatureC ou humidityPct para source = device")
+        return self
 
 
 class Question(BaseModel):

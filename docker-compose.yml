@@ -19,6 +19,9 @@ services:
       SENSOR_API_KEY: ${SENSOR_API_KEY:-}
       HR_ACCESS_CODE: ${HR_ACCESS_CODE:-}
       LLM_API_URL: ${LLM_API_URL:-}
+    # Permite ao app falar com o assistente de IA rodando na sua máquina (fora do Docker).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - app-data:/data
     read_only: true

@@ -137,3 +137,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .cartao .rolagem { padding-top: 0; }
 .cartao table { min-width: 640px; font-size: 0.9rem; }
 nav { flex-wrap: wrap; }
+.mini { display: flex; align-items: flex-end; gap: 2px; height: 48px; border-bottom: 1px solid var(--borda); margin-top: 0.2rem; }
+.mini span { flex: 1; background: var(--tinta); opacity: 0.75; border-radius: 2px 2px 0 0; min-width: 3px; }
+blockquote.ia { margin: 0.2rem 0 0; padding: 0.6rem 0.8rem; border-left: 4px solid #8e44ad; background: #f6f0fa; border-radius: 6px; }
+blockquote.ia p { margin: 0 0 0.3rem; }
+blockquote.ia footer { font-size: 0.75rem; color: var(--tinta-2); }
+.cartao .aviso { margin: 0; font-size: 0.9rem; }

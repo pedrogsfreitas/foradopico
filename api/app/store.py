@@ -31,10 +31,10 @@ CREATE TABLE IF NOT EXISTS dispatches (
     delivered INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
-CREATE TABLE IF NOT EXISTS readings (
+CREATE TABLE IF NOT EXISTS live_readings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     source TEXT NOT NULL,
-    station TEXT NOT NULL,
+    source_id TEXT NOT NULL,
     body TEXT NOT NULL,
     captured_at TEXT NOT NULL
 );
@@ -120,22 +120,32 @@ class Store:
             return self._db.execute("SELECT COUNT(*) FROM dispatches WHERE delivered = 1").fetchone()[0]
 
     # ---- leituras ao vivo -------------------------------------------
-    def add_reading(self, source: str, station: str, body: dict[str, Any], captured_at: str) -> None:
+    def add_reading(self, source: str, source_id: str, body: dict[str, Any], captured_at: str) -> None:
         with self._lock:
             self._db.execute(
-                "INSERT INTO readings (source, station, body, captured_at) VALUES (?, ?, ?, ?)",
-                (source, station, json.dumps(body, ensure_ascii=False), captured_at),
+                "INSERT INTO live_readings (source, source_id, body, captured_at) VALUES (?, ?, ?, ?)",
+                (source, source_id, json.dumps(body, ensure_ascii=False), captured_at),
             )
             # O MVP só precisa das leituras recentes.
             self._db.execute(
-                "DELETE FROM readings WHERE id NOT IN (SELECT id FROM readings ORDER BY id DESC LIMIT 2000)"
+                "DELETE FROM live_readings WHERE id NOT IN (SELECT id FROM live_readings ORDER BY id DESC LIMIT 5000)"
             )
             self._db.commit()
 
     def latest_readings(self) -> list[dict[str, Any]]:
+        """Última leitura de cada câmera ou dispositivo."""
         with self._lock:
             rows = self._db.execute(
-                "SELECT body FROM readings WHERE id IN "
-                "(SELECT MAX(id) FROM readings GROUP BY source, station) ORDER BY id DESC"
+                "SELECT body FROM live_readings WHERE id IN "
+                "(SELECT MAX(id) FROM live_readings GROUP BY source, source_id) ORDER BY id DESC"
             ).fetchall()
         return [json.loads(row["body"]) for row in rows]
+
+    def recent_counts(self, source_id: str, limit: int = 30) -> list[dict[str, Any]]:
+        """Série curta de contagens de uma câmera, para o gráfico da tela Ao vivo."""
+        with self._lock:
+            rows = self._db.execute(
+                "SELECT body FROM live_readings WHERE source = 'vision' AND source_id = ? ORDER BY id DESC LIMIT ?",
+                (source_id, limit),
+            ).fetchall()
+        return [json.loads(row["body"]) for row in reversed(rows)]

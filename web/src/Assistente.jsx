@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { getJson, postJson } from "./api.js";
 
 const EXAMPLES = [
-  "Posso levar bicicleta no metrô?",
-  "Quem tem direito à gratuidade?",
-  "O que fazer se eu perder um objeto na estação?",
+  "Quantas pessoas entram na Sé na segunda às 18h?",
+  "Qual o pico da estação Corinthians-Itaquera na quarta?",
+  "Qual o melhor horário para embarcar no Tucuruvi?",
 ];
 
 export default function Assistente() {
@@ -39,8 +39,8 @@ export default function Assistente() {
     <section aria-labelledby="t-assistente">
       <h1 id="t-assistente">Pergunte ao ForaDoPico</h1>
       <p className="sub">
-        Tire dúvidas sobre regras e direitos do passageiro do Metrô e da CPTM. A resposta cita a fonte ou avisa quando a
-        informação não consta.
+        Pergunte sobre a lotação prevista das Linhas 1-Azul e 3-Vermelha: pico, melhor horário e movimento por faixa de
+        15 minutos. A resposta cita a fonte ou avisa quando a informação não está na base.
       </p>
 
       {configured === false && (
@@ -57,7 +57,7 @@ export default function Assistente() {
           maxLength={500}
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Ex.: Posso levar bicicleta no metrô?"
+          placeholder="Ex.: Quantas pessoas entram na Sé na segunda às 18h?"
         />
         <div className="acoes">
           <button type="submit" disabled={loading || question.trim().length < 3}>
@@ -75,24 +75,19 @@ export default function Assistente() {
 
       {answer && (
         <article className="cartao resposta" aria-live="polite">
-          {answer.refused && <p><span className="selo">Não consta na base</span></p>}
+          {answer.refused && <p><span className="selo">Fora da cobertura: não consta na base</span></p>}
           <p className="texto">{answer.answer || "O assistente não devolveu uma resposta."}</p>
           {answer.sources.length > 0 && (
-            <>
-              <h2>Fontes</h2>
-              <ul className="lista simples">
-                {answer.sources.map((source, index) => (
-                  <li key={index}>
-                    {source.url ? <a href={source.url} rel="noreferrer noopener" target="_blank">{source.title}</a> : source.title}
-                  </li>
-                ))}
-              </ul>
-            </>
+            <p className="nota">
+              Fonte: trecho {answer.sources.map((id) => <code key={id}>{id}</code>).reduce((a, b) => [a, ", ", b])} da base de
+              conhecimento, gerada de <code>vw_app_lotacao_prevista</code> (Ouro · Databricks)
+              {answer.confidence != null && ` · confiança ${Math.round(answer.confidence * 100)}%`}
+            </p>
           )}
-          <p className="nota">Resposta gerada por IA a partir de documentos oficiais. Confira a fonte antes de decidir.</p>
+          <p className="nota">Resposta gerada por IA local (llama3.1 com RAG e ferramenta de consulta). Os números são estimativas de lotação.</p>
         </article>
       )}
-      <footer className="fonte">Fonte: LLM local com base de conhecimento (componente de IA generativa)</footer>
+      <footer className="fonte">Fonte: assistente de lotação (Generative AI) · llama3.1:8b e bge-m3 via Ollama, sobre <code>vw_app_lotacao_prevista</code></footer>
     </section>
   );
 }

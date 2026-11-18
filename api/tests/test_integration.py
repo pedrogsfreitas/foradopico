@@ -129,16 +129,69 @@ def test_validation_error_format():
 
 
 def test_live_readings():
-    reading = {"source": "vision", "sourceId": "camera-1", "stationName": "Sé", "peopleCount": 42, "densityCategory": "Cheio"}
-    assert client.post("/api/liveReadings", json=reading).status_code == 401
-    assert client.post("/api/liveReadings", json=reading, headers=SENSOR).status_code == 201
-    device = {"source": "device", "sourceId": "esp32-1", "stationName": "Sé", "peopleCount": 17}
+    vision = {
+        "source": "vision", "sourceId": "camera-1", "stationName": "Sé", "lineName": "1-Azul",
+        "peopleCount": 42, "capacity": 40, "crowdingIndex": 1.05, "densityCategory": "Critico",
+    }
+    assert client.post("/api/liveReadings", json=vision).status_code == 401
+    assert client.post("/api/liveReadings", json=vision, headers=SENSOR).status_code == 201
+    assert client.post("/api/liveReadings", json={**vision, "peopleCount": 30}, headers=SENSOR).status_code == 201
+    device = {
+        "source": "device", "sourceId": "esp32-1", "stationName": "Estacao de teste",
+        "lightPct": 12, "lightClass": "critica", "temperatureC": 29.5, "humidityPct": 71,
+        "darkZone": True, "darkZoneCount": 2, "aiAlert": "Trecho escuro na plataforma.",
+    }
     assert client.post("/api/liveReadings", json=device, headers=SENSOR).status_code == 201
+
+    # Cada fonte precisa das suas medidas.
+    no_count = {k: v for k, v in vision.items() if k != "peopleCount"}
+    assert client.post("/api/liveReadings", json=no_count, headers=SENSOR).status_code == 422
+    empty_device = {"source": "device", "sourceId": "esp32-2", "stationName": "Sé"}
+    assert client.post("/api/liveReadings", json=empty_device, headers=SENSOR).status_code == 422
+
     body = client.get("/api/live").json()
-    assert {r["source"] for r in body["readings"]} == {"vision", "device"}
+    by_source = {r["source"]: r for r in body["readings"]}
+    assert set(by_source) == {"vision", "device"}
+    assert by_source["vision"]["densityCategory"] == "Crítico"
+    assert by_source["vision"]["peopleCount"] == 30
+    assert [h["people"] for h in by_source["vision"]["history"]] == [42, 30]
+    assert by_source["device"]["lightClass"] == "critica"
 
 
-def test_assistant_degrades_gracefully():
+def test_assistant_degrades_gracefully(monkeypatch):
+    monkeypatch.delenv("LLM_API_URL", raising=False)
     assert client.get("/api/assistant/status").json() == {"configured": False}
-    response = client.post("/api/assistant", json={"question": "Posso levar bicicleta no metrô?"})
+    response = client.post("/api/assistant", json={"question": "Qual o melhor horário na Sé?"})
     assert response.status_code == 503
+
+
+def test_assistant_uses_genai_contract(monkeypatch):
+    import app.product as product
+
+    calls = {}
+
+    class FakeResponse:
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {
+                "pergunta": calls["json"]["pergunta"],
+                "resposta": "Em Sé (Linha 1-Azul), Segunda às 18:00: 5.120 entradas previstas, Crítico.",
+                "fontes": ["lot-se-segunda-l1"],
+                "recusou": False,
+                "confianca": 1.0,
+            }
+
+    def fake_post(url, json, timeout):
+        calls["url"], calls["json"] = url, json
+        return FakeResponse()
+
+    monkeypatch.setenv("LLM_API_URL", "http://assistente.local:8010/")
+    monkeypatch.setattr(product.httpx, "post", fake_post)
+    response = client.post("/api/assistant", json={"question": "Quantas pessoas entram na Sé na segunda às 18h?"})
+    assert response.status_code == 200
+    assert calls["url"] == "http://assistente.local:8010/perguntar"
+    assert calls["json"] == {"pergunta": "Quantas pessoas entram na Sé na segunda às 18h?"}
+    body = response.json()
+    assert body["sources"] == ["lot-se-segunda-l1"] and body["refused"] is False and body["confidence"] == 1.0

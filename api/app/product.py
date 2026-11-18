@@ -60,7 +60,7 @@ def post_reading(body: LiveReading) -> dict[str, str]:
     captured = (body.capturedAt or _now()).astimezone(SAO_PAULO)
     doc = body.model_dump(mode="json")
     doc["capturedAt"] = captured.isoformat(timespec="seconds")
-    store.add_reading(body.source, body.stationName, doc, doc["capturedAt"])
+    store.add_reading(body.source, body.sourceId, doc, doc["capturedAt"])
     return {"status": "stored"}
 
 
@@ -71,18 +71,19 @@ def live() -> dict[str, Any]:
     weekday = WEEKDAYS[now.weekday()]
     readings = []
     for reading in store.latest_readings():
-        lines = [reading["lineName"]] if reading.get("lineName") else gold.lines_of(reading["stationName"])
-        forecast = next(
-            (s for line in lines if (s := gold.slot_at(line, reading["stationName"], weekday, slot))), None
-        )
         age = now - datetime.fromisoformat(reading["capturedAt"])
-        readings.append(
-            {
-                **reading,
-                "minutesAgo": max(0, int(age.total_seconds() // 60)),
-                "forecastCategory": forecast.category if forecast else None,
-            }
-        )
+        item = {**reading, "minutesAgo": max(0, int(age.total_seconds() // 60))}
+        if reading["source"] == "vision":
+            lines = [reading["lineName"]] if reading.get("lineName") else gold.lines_of(reading["stationName"])
+            forecast = next(
+                (s for line in lines if (s := gold.slot_at(line, reading["stationName"], weekday, slot))), None
+            )
+            item["forecastCategory"] = forecast.category if forecast else None
+            item["history"] = [
+                {"at": r["capturedAt"][11:19], "people": r["peopleCount"]}
+                for r in store.recent_counts(reading["sourceId"])
+            ]
+        readings.append(item)
     return {
         "now": now.isoformat(timespec="seconds"),
         "slot": slot,
@@ -93,18 +94,31 @@ def live() -> dict[str, Any]:
 
 
 # ---------------------------------------------------------- assistente
+def _llm_url() -> str | None:
+    """LLM_API_URL é a base da API do assistente (repositório de Generative AI)."""
+    base = os.getenv("LLM_API_URL", "").strip().rstrip("/")
+    if not base:
+        return None
+    return base if base.endswith("/perguntar") else f"{base}/perguntar"
+
+
 @router.get("/assistant/status", tags=["assistente"])
 def assistant_status() -> dict[str, bool]:
-    return {"configured": bool(os.getenv("LLM_API_URL"))}
+    return {"configured": _llm_url() is not None}
 
 
 @router.post("/assistant", tags=["assistente"])
 def assistant(body: Question) -> dict[str, Any]:
-    url = os.getenv("LLM_API_URL")
-    if not url:
+    """Repassa a pergunta para POST /perguntar da API do assistente.
+
+    Contrato do assistente: {"pergunta"} -> {"resposta", "fontes": [str], "recusou", "confianca"}.
+    """
+    url = _llm_url()
+    if url is None:
         raise HTTPException(status_code=503, detail="O assistente ainda não está conectado neste ambiente.")
     try:
-        response = httpx.post(url, json={"question": body.question}, timeout=45)
+        # O modelo roda localmente (Ollama): a primeira resposta pode demorar.
+        response = httpx.post(url, json={"pergunta": body.question}, timeout=90)
         response.raise_for_status()
         data = response.json()
     except (httpx.HTTPError, ValueError):
@@ -112,23 +126,16 @@ def assistant(body: Question) -> dict[str, Any]:
             status_code=503,
             detail="O assistente está fora do ar agora. Tente de novo em alguns minutos.",
         ) from None
+    if not isinstance(data, dict):
+        raise HTTPException(status_code=503, detail="O assistente devolveu uma resposta inesperada.")
 
-    sources = []
-    for item in data.get("sources") or []:
-        if isinstance(item, str):
-            sources.append({"title": item[:200], "url": None})
-        elif isinstance(item, dict):
-            link = item.get("url")
-            sources.append(
-                {
-                    "title": str(item.get("title") or item.get("source") or "Fonte")[:200],
-                    "url": link if isinstance(link, str) and link.startswith("https://") else None,
-                }
-            )
+    sources = [str(item)[:120] for item in (data.get("fontes") or []) if isinstance(item, str)]
+    confidence = data.get("confianca")
     return {
-        "answer": str(data.get("answer") or "")[:4000],
-        "refused": bool(data.get("refused")),
+        "answer": str(data.get("resposta") or "")[:4000],
+        "refused": bool(data.get("recusou")),
         "sources": sources[:8],
+        "confidence": float(confidence) if isinstance(confidence, (int, float)) else None,
     }
 
 

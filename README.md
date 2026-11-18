@@ -7,9 +7,10 @@ Global Solution FIAP 2026.2 · CitizenTech · Engenharia de Software 4ES.
 
 | Nome completo | RM |
 |---|---|
-| Pedro Guerra | RM______ |
-| João Pedro ______ | RM______ |
-| Matheus Haruo ______ | RM______ |
+| João Pedro Saborido Silva | 98184 |
+| Matheus Haruo Queiroz Omori | 97663 |
+| Pedro Guerra de Souza Freitas | 99526 |
+| Victor Augusto Wittner | 98667 |
 
 ## Ficha Técnica do MVP
 
@@ -19,14 +20,14 @@ Global Solution FIAP 2026.2 · CitizenTech · Engenharia de Software 4ES.
 | **Cidadão e território** | Trabalhador CLT que usa trem e metrô no horário de pico na Grande São Paulo |
 | **Problema, em uma frase** | Escalas presenciais montadas sem olhar o transporte jogam todo mundo no mesmo dia e horário, justamente no pico |
 | **Proposta de valor** | Viaje fora do aperto: saiba quando sair para pegar o trem mais vazio, e ajude a cidade a respirar no horário de pico |
-| **Arquitetura: componentes** | API (FastAPI) e front (React) na mesma imagem; pipeline de dados (Airflow e Databricks); robô RPA (Python); visão computacional (YOLO); assistente (LLM local com RAG); dispositivo ESP32 |
-| **Fontes de dados** | Demanda por estação do portal de transparência do Metrô de SP; clima do Open-Meteo; views da camada Ouro `vw_app_lotacao_prevista` e `vw_app_minha_semana` |
-| **Modelos de IA utilizados** | A CONFIRMAR com a equipe: YOLO para contagem de pessoas; LLM local com RAG para o assistente |
+| **Arquitetura: componentes** | API (FastAPI) e front (React) na mesma imagem, numa VM Azure; pipeline de dados (Airflow e Databricks); robô RPA (Python, BotCity); visão computacional (YOLO11); assistente de lotação (LLM local com RAG e ferramenta); robô-sensor de estação (ESP32) |
+| **Fontes de dados** | Demanda por estação do portal de transparência do Metrô de SP; clima do Open-Meteo; feriados da BrasilAPI; situação das linhas no site do Metrô (robô RPA); planilha de escala do RH; contagem pela câmera; luz, temperatura e umidade do robô-sensor. O app lê as views da Ouro `vw_app_lotacao_prevista` e `vw_app_minha_semana` |
+| **Modelos de IA utilizados** | YOLO11n com fine-tuning para detectar cabeças (contagem de pessoas, MAE 3,6); `llama3.1:8b` e `bge-m3` locais via Ollama (assistente com RAG e ferramenta); Gemini no robô-sensor (alerta e relatório da ronda) |
 | **URL do MVP e repositório** | URL: https://foradopico-gs.brazilsouth.cloudapp.azure.com · Repositório: este |
 | **Indicadores de impacto** | Horas devolvidas ao funcionário por mês; viagens no pico evitadas por funcionário; lotação média evitada; dias com plano B acionado |
 | **ODS conectados** | ODS 11 (cidades sustentáveis), ODS 3 (saúde e bem-estar), ODS 9 (inovação e infraestrutura), ODS 10 (redução das desigualdades) |
 
-Repositórios das outras disciplinas: [Big Data](https://github.com/saborido613/foradopico-bigdata) · [RPA](https://github.com/haruoooo/SemestralRpa).
+Repositórios das outras disciplinas: [Big Data](https://github.com/saborido613/foradopico-bigdata) · [RPA](https://github.com/haruoooo/SemestralRpa) · [Generative AI](https://github.com/lucca0100/ForaDoPico) · Visão computacional: A PREENCHER · Maker Lab: A PREENCHER.
 
 ## O que o MVP faz
 
@@ -34,9 +35,9 @@ Repositórios das outras disciplinas: [Big Data](https://github.com/saborido613/
 |---|---|---|
 | Lotação prevista | Lotação por estação, dia e faixa de 15 min, com o melhor horário | Big Data: `vw_app_lotacao_prevista` (Ouro · Databricks) |
 | Minha semana | Dias presenciais, janela sugerida e antes × depois | Big Data: `vw_app_minha_semana` (Ouro · Databricks) |
-| Alertas | Situação das linhas, falhas e plano B aprovado | RPA: robô, pelo contrato da API |
-| Ao vivo | Contagem de pessoas na plataforma ao lado da previsão | Visão computacional (YOLO) e Maker Lab (ESP32) |
-| Pergunte | Dúvidas sobre regras e direitos, com fonte ou "não consta" | Generative AI: LLM local com RAG |
+| Alertas | Situação das linhas, falhas e plano B aprovado | RPA: robô monitorando o site do Metrô, pelo contrato da API |
+| Ao vivo | Pessoas na plataforma medidas pela câmera, ao lado da previsão; luz, temperatura, umidade e alerta da IA do robô-sensor | Visão computacional (YOLO11) e Maker Lab (ESP32) |
+| Pergunte | Lotação prevista, pico e melhor horário em linguagem natural, com fonte ou "não consta" | Generative AI: assistente local com RAG e ferramenta |
 | Empresa (RH) | Aprovação de escalas e planos B, indicadores de impacto e negócio | RPA, motor de escala e BI |
 
 O contrato de cada integração está em [docs/integracao.md](docs/integracao.md). Operação: `GET /health`, `GET /metrics` (Prometheus) e documentação interativa em `/api/docs`.
@@ -85,7 +86,7 @@ scripts/      Dados fictícios de demonstração
 web/          Front React (Vite)
 monitoring/   Prometheus, regras de alerta e dashboard do Grafana
 infra/        Terraform da nuvem
-docs/         Contratos de integração (robô RPA, visão, ESP32 e LLM)
+docs/         Contratos de integração (robô RPA, visão, ESP32 e assistente)
 .github/      Pipeline do GitHub Actions
 ```
 
