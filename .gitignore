@@ -33,3 +33,6 @@ monitoring/targets/*.yml
 .DS_Store
 .idea/
 .vscode/
+
+# Guia interno do pitch (enviado à equipe por fora)
+README-PITCH.md
